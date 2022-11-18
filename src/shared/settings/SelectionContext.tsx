@@ -32,6 +32,8 @@ interface ISelectionContext {
       candidateId: string
     ) => void;
     removeResult: (resultId: string) => void;
+    addResultQuantity: (resultId: string) => void;
+    removeResultQuantity: (resultId: string) => void;
   };
 }
 
@@ -48,6 +50,8 @@ const initialState: ISelectionContext = {
     initCurrentUnits: (units: IShoppingSaleUnit[]) => {},
     selectOption: (unitId: string, optionId: string, candidateId: string) => {},
     removeResult: (resultId: string) => {},
+    addResultQuantity: (resultId: string) => {},
+    removeResultQuantity: (resultId: string) => {},
   },
 };
 
@@ -87,6 +91,7 @@ const SelectionContextProvider = ({ children }: IProps) => {
       );
     }
 
+    if (filteredStock.length !== 1) return;
     if (results.find((result) => filteredStock[0].id === result.stock.id))
       return;
 
@@ -134,6 +139,28 @@ const SelectionContextProvider = ({ children }: IProps) => {
     setResults(results.filter(({ stock: { id } }) => id !== resultId));
   };
 
+  const addResultQuantity = (resultId: string) =>
+    setResults(
+      results.map((result) =>
+        result.stock.id !== resultId
+          ? result
+          : { quantity: result.quantity + 1, stock: result.stock }
+      )
+    );
+
+  const removeResultQuantity = (resultId: string) =>
+    setResults(
+      results.map((result) =>
+        result.stock.id !== resultId
+          ? result
+          : {
+              quantity:
+                result.quantity > 1 ? result.quantity - 1 : result.quantity,
+              stock: result.stock,
+            }
+      )
+    );
+
   const value: ISelectionContext = {
     state: {
       currentUnits,
@@ -143,6 +170,8 @@ const SelectionContextProvider = ({ children }: IProps) => {
       initCurrentUnits,
       selectOption,
       removeResult,
+      addResultQuantity,
+      removeResultQuantity,
     },
   };
 

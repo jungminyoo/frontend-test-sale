@@ -30,6 +30,7 @@ function SaleDescription() {
       <br />
       <small>{sale.channels.map((channel) => channel.name + " ")}</small>
       <h1>{sale.content.title}</h1>
+
       <SaleDescriptionUnits />
       <SaleDescriptionStocks />
     </main>
